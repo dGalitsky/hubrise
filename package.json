@@ -16,6 +16,7 @@
     "app-bundle-info": "^0.2.2",
     "app-info-parser": "^1.1.3",
     "glob": "^7.2.0",
+    "handlebars": "^4.7.7",
     "ipa-bundler": "^1.1.0"
   },
   "devDependencies": {

@@ -1,0 +1,19 @@
+<div>
+  <a href="{{rootUrl}}"><img src="{{qrImage}}" />
+    Scan the QR to open this page on a mobile device.
+  </a></div>
+<ul>
+  {{#each items}}
+    <a href="{{this.href}}">
+      {{#if this.urls.icon}}
+        <img width="90" height="90" src="{{this.urls.icon}}" />
+      {{/if}}
+      <span class="caption">Install
+        <span class="title">{{this.appTitle}}</span>
+        ({{this.bundleMarketingVersion}}
+        /
+        {{this.bundleVersion}})</span>
+      <div><span class="file">{{this.appFile}}</span></div>
+    </a>
+  {{/each}}
+</ul>

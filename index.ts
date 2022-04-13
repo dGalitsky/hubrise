@@ -8,8 +8,10 @@ import * as os from "os";
 import { promisify } from "util";
 import { basename } from "path";
 import { exec } from "child_process";
+import * as https from 'https'
+import { compile } from "handlebars";
 
-type AppDetails = {
+export type AppDetails = {
   bundleIdentifier: string;
   bundleVersion: string;
   bundleMarketingVersion: string;
@@ -29,6 +31,7 @@ async function run() {
   const destinationUrl = core.getInput("destinationUrl", { required: false }) || `https://${bucket}.s3.amazonaws.com${path.join("/", destinationPath, "/")}`;
   const sourcePaths = core.getInput("sourcePaths", { required: true });
   const extraArgs = core.getInput("extraArgs", { required: false });
+  const template = core.getInput("template", { required: false });
   
   // Temporary directory to collect files
   const dest = await promisify(fs.mkdtemp)(path.join(os.tmpdir(), "hubrise"));
@@ -43,8 +46,9 @@ async function run() {
   // Write landing page
   console.log(apps);
   const indexUrl = `${destinationUrl}index.html`;
+  const html = await landing(apps, indexUrl, template)
   await promisify(fs.writeFile)(path.join(dest, "index.json"), JSON.stringify(apps, null, 2));
-  await promisify(fs.writeFile)(path.join(dest, "index.html"), landing(apps, indexUrl));
+  await promisify(fs.writeFile)(path.join(dest, "index.html"), html);
   core.setOutput("url", indexUrl);
 
   // Sync dest to bucket
@@ -133,24 +137,26 @@ function extension(buf: Buffer) {
   }
 }
 
-function landing(data: AppDetails[], rootUrl: string) {
-  const items = data.map((options) => {
-    const maybeImage = options.urls.icon ? `<img width=90 height=90 src="${options.urls.icon}" /> ` : "";
-    const href = options.urls.manifest ? link(options.urls.manifest) : options.urls.abi;
-    return `
-<a href="${href}">
-  ${maybeImage}
-  <span class="caption">Install <span class="title">${options.appTitle}</span> (${options.bundleMarketingVersion} / ${options.bundleVersion})</span>
-  <div><span class="file">${options.appFile}</span></div>
-</a>`.trim();
-  });
-  return `
-<div>
-  <a href="${rootUrl}"><img src="${qr(rootUrl, 200)}" />
-  Scan the QR to open this page on a mobile device.
-</a></div>
-<ul>${items.map((html) => `<li>${html}</li>`).join("")}</ul>
-`.trim();
+export async function landing(data: AppDetails[], rootUrl: string, template?: string) {
+  let templateString
+  if (template) {
+   templateString = await promisify(https.get)(template)
+  } else {
+    templateString = (await promisify(fs.readFile)(path.dirname + '/index.hbs')).toString()
+  }
+  const renderTemplate = compile(templateString)
+
+  const qrImage = qr(rootUrl, 200)
+  const items = data.map((options) => ({
+    ...options,
+    href: options.urls.manifest ? link(options.urls.manifest) : options.urls.abi
+  }))
+
+  return renderTemplate({
+    rootUrl,
+    qrImage,
+    items
+  })
 }
 
 // Formats a QR code of a variable url & size
