@@ -262,7 +262,7 @@ var require_tunnel = __commonJS({
     var net = require("net");
     var tls = require("tls");
     var http = require("http");
-    var https2 = require("https");
+    var https = require("https");
     var events = require("events");
     var assert = require("assert");
     var util = require("util");
@@ -284,12 +284,12 @@ var require_tunnel = __commonJS({
     }
     function httpOverHttps(options) {
       var agent = new TunnelingAgent(options);
-      agent.request = https2.request;
+      agent.request = https.request;
       return agent;
     }
     function httpsOverHttps(options) {
       var agent = new TunnelingAgent(options);
-      agent.request = https2.request;
+      agent.request = https.request;
       agent.createSocket = createSecureSocket;
       agent.defaultPort = 443;
       return agent;
@@ -491,7 +491,7 @@ var require_http_client = __commonJS({
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var http = require("http");
-    var https2 = require("https");
+    var https = require("https");
     var pm = require_proxy();
     var tunnel;
     var HttpCodes;
@@ -795,7 +795,7 @@ var require_http_client = __commonJS({
         const info = {};
         info.parsedUrl = requestUrl;
         const usingSsl = info.parsedUrl.protocol === "https:";
-        info.httpModule = usingSsl ? https2 : http;
+        info.httpModule = usingSsl ? https : http;
         const defaultPort = usingSsl ? 443 : 80;
         info.options = {};
         info.options.host = info.parsedUrl.hostname;
@@ -874,11 +874,11 @@ var require_http_client = __commonJS({
         }
         if (this._keepAlive && !agent) {
           const options = { keepAlive: this._keepAlive, maxSockets };
-          agent = usingSsl ? new https2.Agent(options) : new http.Agent(options);
+          agent = usingSsl ? new https.Agent(options) : new http.Agent(options);
           this._agent = agent;
         }
         if (!agent) {
-          agent = usingSsl ? https2.globalAgent : http.globalAgent;
+          agent = usingSsl ? https.globalAgent : http.globalAgent;
         }
         if (usingSsl && this._ignoreSslError) {
           agent.options = Object.assign(agent.options || {}, {
@@ -35184,7 +35184,6 @@ var os = __toESM(require("os"));
 var import_util = require("util");
 var import_path = require("path");
 var import_child_process = require("child_process");
-var https = __toESM(require("https"));
 var import_handlebars = __toESM(require_lib6());
 var ABI = require_src();
 run().catch(console.error);
@@ -35285,7 +35284,7 @@ async function landing(data, rootUrl, template) {
   let templateString;
   if (template) {
     const templateFile = (await glop(template, {}))[0];
-    templateString = await (0, import_util.promisify)(https.get)(templateFile);
+    templateString = (await (0, import_util.promisify)(fs.readFile)(templateFile)).toString();
   } else {
     templateString = (await (0, import_util.promisify)(fs.readFile)(path2.join(__dirname, "/index.hbs"))).toString();
   }
