@@ -20,6 +20,9 @@ inputs:
   extraArgs:
     description: "extra aws cli args"
     required: false
+  template:
+    description: "an URL of the handlebars template"
+    required: false
 outputs:
   url:
     description: "url of the generated download page (https://$bucket.s3.amazonaws.com/$path/index.html)"
