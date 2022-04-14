@@ -35287,7 +35287,7 @@ async function landing(data, rootUrl, template) {
   const items = data.map((options) => ({
     ...options,
     href: options.urls.manifest ? (0, import_ipa_bundler.link)(options.urls.manifest) : options.urls.abi,
-    platform: options.urls.manifest ? "ios" : "android"
+    isIos: !!options.urls.manifest
   }));
   return renderTemplate({
     rootUrl,

@@ -144,7 +144,7 @@ export async function landing(data: AppDetails[], rootUrl: string, template?: st
   const items = data.map((options) => ({
     ...options,
     href: options.urls.manifest ? link(options.urls.manifest) : options.urls.abi,
-    platform: options.urls.manifest ? 'ios' : 'android'
+    isIos: !!options.urls.manifest
   }))
   return renderTemplate({
     rootUrl,
