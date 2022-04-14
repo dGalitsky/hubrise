@@ -31,7 +31,7 @@ async function run() {
   const destinationUrl = core.getInput("destinationUrl", { required: false }) || `https://${bucket}.s3.amazonaws.com${path.join("/", destinationPath, "/")}`;
   const sourcePaths = core.getInput("sourcePaths", { required: true });
   const extraArgs = core.getInput("extraArgs", { required: false });
-  const template = core.getInput("template", { required: false }) || "/index.hbs";
+  const template = core.getInput("template", { required: false }) || path.join(__dirname, "/index.hbs");
   
   // Temporary directory to collect files
   const dest = await promisify(fs.mkdtemp)(path.join(os.tmpdir(), "hubrise"));
@@ -138,15 +138,13 @@ function extension(buf: Buffer) {
 }
 
 export async function landing(data: AppDetails[], rootUrl: string, template?: string) {
-  const templateString = (await promisify(fs.readFile)(path.join(__dirname, template))).toString()
+  const templateString = (await promisify(fs.readFile)(template)).toString()
   const renderTemplate = compile(templateString)
-
   const qrImage = qr(rootUrl, 200)
   const items = data.map((options) => ({
     ...options,
     href: options.urls.manifest ? link(options.urls.manifest) : options.urls.abi
   }))
-
   return renderTemplate({
     rootUrl,
     qrImage,

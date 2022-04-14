@@ -35193,7 +35193,7 @@ async function run() {
   const destinationUrl = core.getInput("destinationUrl", { required: false }) || `https://${bucket}.s3.amazonaws.com${path2.join("/", destinationPath, "/")}`;
   const sourcePaths = core.getInput("sourcePaths", { required: true });
   const extraArgs = core.getInput("extraArgs", { required: false });
-  const template = core.getInput("template", { required: false }) || "/index.hbs";
+  const template = core.getInput("template", { required: false }) || path2.join(__dirname, "/index.hbs");
   const dest = await (0, import_util.promisify)(fs.mkdtemp)(path2.join(os.tmpdir(), "hubrise"));
   const files = await glop(sourcePaths, {});
   const data = await Promise.all(files.map((file, index) => handleFile(file, index).catch((e) => {
@@ -35281,7 +35281,7 @@ function extension(buf) {
   }
 }
 async function landing(data, rootUrl, template) {
-  const templateString = (await (0, import_util.promisify)(fs.readFile)(path2.join(__dirname, template))).toString();
+  const templateString = (await (0, import_util.promisify)(fs.readFile)(template)).toString();
   const renderTemplate = (0, import_handlebars.compile)(templateString);
   const qrImage = qr(rootUrl, 200);
   const items = data.map((options) => ({
