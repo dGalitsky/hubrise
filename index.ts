@@ -142,7 +142,7 @@ export async function landing(data: AppDetails[], rootUrl: string, template?: st
   if (template) {
    templateString = await promisify(https.get)(template)
   } else {
-    templateString = (await promisify(fs.readFile)(path.dirname + '/index.hbs')).toString()
+    templateString = (await promisify(fs.readFile)(path.join(__dirname, '/index.hbs'))).toString()
   }
   const renderTemplate = compile(templateString)
 

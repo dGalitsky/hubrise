@@ -35286,7 +35286,7 @@ async function landing(data, rootUrl, template) {
   if (template) {
     templateString = await (0, import_util.promisify)(https.get)(template);
   } else {
-    templateString = (await (0, import_util.promisify)(fs.readFile)(path2.dirname + "/index.hbs")).toString();
+    templateString = (await (0, import_util.promisify)(fs.readFile)(path2.join(__dirname, "/index.hbs"))).toString();
   }
   const renderTemplate = (0, import_handlebars.compile)(templateString);
   const qrImage = qr(rootUrl, 200);
