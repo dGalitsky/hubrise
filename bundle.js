@@ -35284,7 +35284,8 @@ function extension(buf) {
 async function landing(data, rootUrl, template) {
   let templateString;
   if (template) {
-    templateString = await (0, import_util.promisify)(https.get)(template);
+    const templateFile = (await glop(template, {}))[0];
+    templateString = await (0, import_util.promisify)(https.get)(templateFile);
   } else {
     templateString = (await (0, import_util.promisify)(fs.readFile)(path2.join(__dirname, "/index.hbs"))).toString();
   }

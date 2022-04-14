@@ -140,7 +140,8 @@ function extension(buf: Buffer) {
 export async function landing(data: AppDetails[], rootUrl: string, template?: string) {
   let templateString
   if (template) {
-   templateString = await promisify(https.get)(template)
+    const templateFile = (await glop(template, {}))[0];
+    templateString = await promisify(https.get)(templateFile)
   } else {
     templateString = (await promisify(fs.readFile)(path.join(__dirname, '/index.hbs'))).toString()
   }
