@@ -35286,7 +35286,8 @@ async function landing(data, rootUrl, template) {
   const qrImage = qr(rootUrl, 200);
   const items = data.map((options) => ({
     ...options,
-    href: options.urls.manifest ? (0, import_ipa_bundler.link)(options.urls.manifest) : options.urls.abi
+    href: options.urls.manifest ? (0, import_ipa_bundler.link)(options.urls.manifest) : options.urls.abi,
+    platform: options.urls.manifest ? "ios" : "android"
   }));
   return renderTemplate({
     rootUrl,

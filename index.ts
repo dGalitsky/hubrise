@@ -143,7 +143,8 @@ export async function landing(data: AppDetails[], rootUrl: string, template?: st
   const qrImage = qr(rootUrl, 200)
   const items = data.map((options) => ({
     ...options,
-    href: options.urls.manifest ? link(options.urls.manifest) : options.urls.abi
+    href: options.urls.manifest ? link(options.urls.manifest) : options.urls.abi,
+    platform: options.urls.manifest ? 'ios' : 'android'
   }))
   return renderTemplate({
     rootUrl,
